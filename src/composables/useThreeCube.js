@@ -33,6 +33,9 @@ const FACE_AXES = {
 const ALL_MOVES = ['R', "R'", 'L', "L'", 'U', "U'", 'D', "D'", 'F', "F'", 'B', "B'"]
 
 const ANIMATION_DURATION_MS = 300
+const CAMERA_RESET_DURATION_MS = 500
+const INITIAL_CAMERA_POSITION = [5, 5, 7]
+const INITIAL_CAMERA_TARGET = [0, 0, 0]
 
 const faceletIndex = (face, cx, cy, cz) => {
   switch (face) {
@@ -164,8 +167,8 @@ export function useThreeCube(containerRef) {
     scene.background = new THREE.Color(BACKGROUND_COLOR)
 
     camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100)
-    camera.position.set(5, 5, 7)
-    camera.lookAt(0, 0, 0)
+    camera.position.set(...INITIAL_CAMERA_POSITION)
+    camera.lookAt(...INITIAL_CAMERA_TARGET)
 
     renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(window.devicePixelRatio)
@@ -269,6 +272,25 @@ export function useThreeCube(containerRef) {
     updateColors()
   }
 
+  const resetCamera = () => {
+    if (!camera || !controls) return
+    const startPos = camera.position.clone()
+    const startTarget = controls.target.clone()
+    const targetPos = new THREE.Vector3(...INITIAL_CAMERA_POSITION)
+    const targetTarget = new THREE.Vector3(...INITIAL_CAMERA_TARGET)
+    const startTime = performance.now()
+
+    const step = () => {
+      const elapsed = performance.now() - startTime
+      const t = Math.min(1, elapsed / CAMERA_RESET_DURATION_MS)
+      const eased = easeOutCubic(t)
+      camera.position.lerpVectors(startPos, targetPos, eased)
+      controls.target.lerpVectors(startTarget, targetTarget, eased)
+      if (t < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }
+
   const dispose = () => {
     if (frameId) cancelAnimationFrame(frameId)
     resizeObserver?.disconnect()
@@ -303,5 +325,5 @@ export function useThreeCube(containerRef) {
   onMounted(setup)
   onBeforeUnmount(dispose)
 
-  return { animateMove, scrambleCube, resetCube, updateColors }
+  return { animateMove, scrambleCube, resetCube, resetCamera, updateColors }
 }

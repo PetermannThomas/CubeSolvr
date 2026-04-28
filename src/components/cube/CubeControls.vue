@@ -8,6 +8,7 @@ const moves = ['R', "R'", 'L', "L'", 'U', "U'", 'D', "D'", 'F', "F'", 'B', "B'"]
 const handleMove = (move) => cubeApi.value?.animateMove(move)
 const handleReset = () => cubeApi.value?.resetCube()
 const handleScramble = () => cubeApi.value?.scrambleCube()
+const handleResetView = () => cubeApi.value?.resetCamera()
 </script>
 
 <template>
@@ -34,6 +35,12 @@ const handleScramble = () => cubeApi.value?.scrambleCube()
         @click="handleScramble"
       >
         Scramble
+      </button>
+      <button
+        class="px-4 py-1.5 text-xs font-medium rounded-md bg-zinc-900 hover:bg-zinc-800 active:bg-zinc-700 border border-zinc-800 text-zinc-300 transition-colors"
+        @click="handleResetView"
+      >
+        Reset View
       </button>
     </div>
   </div>
