@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm create *)",
+      "Bash(mkdir -p /tmp/vue-init)",
+      "Read(//tmp/**)",
+      "Bash(rm -rf cubesolvr)",
+      "Bash(npm install *)",
+      "Bash(npm run *)"
+    ]
+  }
+}
